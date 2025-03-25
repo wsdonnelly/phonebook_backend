@@ -6,6 +6,7 @@ const app = express()
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :post'))
 morgan.token('post', (req) => req.method === 'POST' ? JSON.stringify(req.body) : '')
+app.use(express.static('dist'))
 
 let persons = [
     { 
