@@ -17,13 +17,13 @@ const unknownEndpoint = (request, response) => {
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
-  
+
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } else if (error.name === 'ValidationError') {
     return response.status(400).json({ error: error.message })
   }
-  
+
   next(error)
 }
 
@@ -34,15 +34,15 @@ app.use(express.json())
 
 //endpoints
 app.get('/info', (request, response) => {
-    response.send(
-        `<p>The Phonebook has info for ${Person.length} people </p>
-        <p>${new Date()}</p>`)
+  response.send(
+    `<p>The Phonebook has info for ${Person.length} people </p>
+    <p>${new Date()}</p>`)
 })
 
 app.get('/api/persons', (request, response) => {
-      Person.find({}).then(persons => {
-        response.json(persons)
-      })
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -55,12 +55,12 @@ app.get('/api/persons/:id', (request, response, next) => {
     })
     .catch(error => {
       next(error)
-    }) 
+    })
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const {name, number} = request.body
-  
+  const { name, number } = request.body
+
   Person.findById(request.params.id)
     .then(updatedPerson => {
       if (!updatedPerson)
@@ -76,7 +76,7 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(res => {
+    .then(response => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -86,9 +86,9 @@ app.post('/api/persons', (request, response, next) => {
   const body = request.body
 
   if (!body.name || !body.number) {
-      return response.status(400).json({ 
-        error: 'name or number is missing' 
-      })
+    return response.status(400).json({
+      error: 'name or number is missing'
+    })
   }
 
   const person = new Person({
@@ -96,10 +96,11 @@ app.post('/api/persons', (request, response, next) => {
     number: body.number || false,
   })
 
-  person.save().then(savedPerson => {
-    response.json(savedPerson)
-  })
-  .catch(error => next(error))
+  person.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
+    })
+    .catch(error => next(error))
 })
 
 //middleware
